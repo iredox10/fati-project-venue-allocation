@@ -29,6 +29,10 @@ const course = new mongoose.Schema(
       type: String,
       required: true,
     },
+    noOfStudents:{
+      type:String,
+      required: true
+    },
     specialReq: Array,
   },
   { timestamps: true }

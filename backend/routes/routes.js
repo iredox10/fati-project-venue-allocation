@@ -37,4 +37,7 @@ route.get('/get-venues', controller.get_venues)
 
 route.post('/add-venue', controller.add_venue)
 
+
+route.get('/auto-allocation/:day', controller.AutoAllocation)
+
 export default route

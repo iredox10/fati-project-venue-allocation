@@ -1,6 +1,5 @@
-
 import mongoose from "mongoose";
-import slug from 'slug'
+import slug from "slug";
 
 const venue = new mongoose.Schema(
   {
@@ -9,9 +8,9 @@ const venue = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    slug:{
+    slug: {
       type: String,
-      unique: true
+      unique: true,
     },
     block: {
       type: String,
@@ -22,15 +21,20 @@ const venue = new mongoose.Schema(
       required: true,
     },
     equipments: Array,
+    isAllocated: {
+      type: Boolean,
+      default: false,
+    },
+    
   },
   { timestamps: true }
 );
 
-venue.pre('save', function(){
-  if(this.name){
+venue.pre("save", function () {
+  if (this.name) {
     this.slug = slug(this.name).toLowerCase();
   }
-})
+});
 const Venue = mongoose.model("venue", venue);
 
 export default Venue;
