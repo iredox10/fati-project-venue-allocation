@@ -17,10 +17,11 @@ route.get('/get-level/:slug', controller.get_level)
 
 route.get('/get-levels/:department', controller.get_levels)
 
-
 route.post('/add-course/:slug', controller.add_course)
 
 route.get('/get-courses/:slug', controller.get_courses)
+
+route.get('/get-all-courses', controller.getCourses)
 
 route.get('/get-course/:slug', controller.get_course)
 
@@ -39,5 +40,9 @@ route.post('/add-venue', controller.add_venue)
 
 
 route.get('/auto-allocation/:day', controller.AutoAllocation)
+
+route.get('/find-available-venues/:course',controller.find_available_venues)
+
+route.post('/allocate-venue/:slug/:courseName', controller.allocate_venue)
 
 export default route

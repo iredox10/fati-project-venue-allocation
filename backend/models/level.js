@@ -24,7 +24,7 @@ const level = new mongoose.Schema(
     courses: [
       {
         type: mongoose.Types.ObjectId,
-        ref: "timetable",
+        ref: "course",
       },
     ],
   },

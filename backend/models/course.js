@@ -23,17 +23,18 @@ const course = new mongoose.Schema(
     },
     timeFrom: {
       type: String,
-      required: true,
+      // required: true,
     },
     timeTo: {
       type: String,
-      required: true,
+      // required: true,
     },
     noOfStudents:{
       type:String,
       required: true
     },
     specialReq: Array,
+    venue: String
   },
   { timestamps: true }
 );

@@ -25,7 +25,7 @@ const venue = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    
+    allocatedCourse: String,
   },
   { timestamps: true }
 );
