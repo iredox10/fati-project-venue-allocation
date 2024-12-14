@@ -5,6 +5,7 @@ import { path } from "../../lib/path";
 import { useParams } from "react-router-dom";
 import FormModel from "../components/FormModel";
 import FormInput from "../components/FormInput";
+import Table from "../components/Table";
 
 const Level = () => {
   const [showModel, setShowModel] = useState(false);
@@ -85,51 +86,70 @@ const Level = () => {
     queryFn: () => getAvailableVenues(courseName),
     enabled: queryEnable,
   });
+  const handleAllocateVenue = async () => {
+    try {
+      const res = await axios.post(
+        `${path}/allocate-venue/${venueName}/${courseName}`
+      );
+      if(res.status != 200){
+        throw err
+      }
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  };
+  const allocateVenue = useMutation({
+    mutationFn: handleAllocateVenue,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["level"]);
+      setShowConfirmMode(false);
+    },
+    onError: (err) => {
+      setErr(err.response.data.message);
+      console.log(err);
+    },
+  });
 
   const selectedCourse = (courseName) => {
     setCourseName(courseName);
     setQueryEnable(true);
   };
 
+  const handleCourse = (slug) => {
+    selectedCourse(slug);
+  };
+
+  const [showConfirmMode, setShowConfirmMode] = useState(false);
+  const [venueName, setVenueName] = useState();
+
   return (
     <div>
       <h1>{data && data.data.name} courses</h1>
-      <div className={venues && venues.length > 0 && `flex`}>
-        <div>
-          {data &&
-            data.data.courses.map((course) => (
-              <div
-                key={course._id}
-                className="my-2 bg-gray-200"
-                onClick={() => selectedCourse(course.slug)}
-              >
-                <p>
-                  <span className="font-bold">course name: </span>
-                  {course.name}
-                </p>
-                <p>
-                  <span className="font-bold">course code: </span>
-                  {course.code}
-                </p>
-                <p>
-                  <span className="font-bold">number of student: </span>
-                  {course.noOfStudents}
-                </p>
-                <p>
-                  <span className="font-bold">course duration: </span>
-                  {course.duration}
-                </p>
-                <p>
-                  <span className="font-bold">special requirements: </span>
-                  {course.specialReq.length !== 0 ? course.specialReq : "none"}
-                </p>
-              </div>
-            ))}
-        </div>
-        <div>
+      <div className={venues && venues.length > 0 && ``}>
+        {data && <Table data={data.data.courses} onclick={selectedCourse} />}
+        {venues && venues.length > 0 && (
+          <div className="p-5">
+            available venues for <span className="font-bold">{courseName}</span>
+          </div>
+        )}
+        {venues && venues.length <= 0 && (
+          <div className="p-5">
+            No available venue for{" "}
+            <span className="font-bold">{courseName}</span>
+          </div>
+        )}
+        <div className="mx-5 flex my-4  gap-4">
           {venues &&
             venues.map((venue) => (
-              <div>
+              <div
+                className=" p-2 bg-white cursor-pointer "
+                onClick={() => {
+                  setShowConfirmMode(true);
+                  setVenueName(venue.name);
+                }}
+              >
                 <p>
                   <span>name:</span> {venue.name}
                 </p>
@@ -150,6 +170,35 @@ const Level = () => {
             ))}
         </div>
       </div>
+
+      {showConfirmMode && (
+        <div className="bg-white/50 absolute top-0 w-full h-screen">
+          <div className="grid place-content-center m-60 bg-blue-300">
+            {err && err}
+            <div>
+              <h1 className="capitalize text-xl text-center">
+                assign
+                <span className="font-bold block">
+                  venue: {venueName}
+                </span> to <span className="font-bold block">{courseName}</span>
+              </h1>
+            </div>
+            <div>
+              <button type="button" onClick={() => allocateVenue.mutate()}>
+                yes
+              </button>
+              <button type="button" onClick={() => setShowConfirmMode(false)}>
+                no
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+  <div>
+        <div className="absolute bottom-0 right-0">
+        <button onClick={() => setShowModel(true)}>add course</button>
+        </div>
+  </div>
       {showModel && (
         <FormModel
           onsubmit={handleSubmit}
@@ -189,6 +238,7 @@ const Level = () => {
           <button type="submit">add</button>
         </FormModel>
       )}
+      
     </div>
   );
 };

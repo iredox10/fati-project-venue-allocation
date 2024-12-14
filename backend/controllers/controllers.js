@@ -233,7 +233,19 @@ export const find_available_venues = async (req, res) => {
 
 export const allocate_venue = async (req, res) => {
   try {
-    const venue = await Venue.findOneAndUpdate(
+    const course = await Course.findOne({name: req.params.courseName});
+    const venue = await Venue.findOne({name:req.params.slug});
+    if (course.venue == venue.name) {
+      return res
+        .status(404)
+        .json({message:`${venue.name} already assign to ${course.name}`})
+    }
+    const updatedCourse = await Course.findOneAndUpdate(
+      { slug: req.params.courseName },
+      { venue: venue.name },
+      { new: true }
+    );
+    const updatedVenue = await Venue.findOneAndUpdate(
       { slug: req.params.slug },
       {
         isAllocated: true,
@@ -241,7 +253,8 @@ export const allocate_venue = async (req, res) => {
       },
       { new: true }
     );
-    res.json(venue);
+
+    res.json({ updateCourse, updatedVenue });
   } catch (err) {
     res.json(err.message);
   }
