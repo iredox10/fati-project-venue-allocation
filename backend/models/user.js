@@ -1,11 +1,11 @@
 import mongoose from 'mongoose'
 
-const student = new mongoose.Schema({
+const admin = new mongoose.Schema({
     fullName: {
         type: String,
         required: true
     },
-    candidateNo: {
+    email: {
         type: String,
         required: true,
         unique: true
@@ -14,16 +14,16 @@ const student = new mongoose.Schema({
         type: String,
         required: true
     },
-    level: {
-        type: String,
-        required: true
-    },
     password:{
         type: String,
         required: true
+    },
+    isAdmin:{
+        type: Boolean,
+        default: false
     }
 },{timestamps:true})
 
-const Student = mongoose.model('student',student)
+const Admin = mongoose.model('admin',admin)
 
-export default Student
+export default Admin
